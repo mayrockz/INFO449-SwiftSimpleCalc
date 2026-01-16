@@ -26,12 +26,175 @@ print("Welcome to the UW Calculator Playground")
 //: 
 //: For this latter set of operations, it is safe to assume that `["count"]` (with no additional arguments) is 0, `["avg"]` is also 0, and `["fact"]` is 0. `["1", "fact"]` should return 1, and `["0", "fact"]` should also return 1. (Yes, 0-factorial is 1. True story.)
 //: 
-func calculate(_ args: [String]) -> Int {
+func calculate(_ args: [String]) -> Int
+{
+    // handles empty input
+    guard !args.isEmpty else { return 0 }
+    
+    // handles 3 arg input
+    if args.count == 3, let l = Int(args[0]), let r = Int(args[2])
+    {
+        let op = args[1]
+        
+        switch op
+        {
+            case "+":
+                return l + r
+            
+            case "-":
+                return l - r
+            
+            case "*":
+                return l * r
+            
+            case "/":
+            return r == 0 ? 0 : l / r
+            
+            case "%":
+            return r == 0 ? 0 : l % r
+            
+            default:
+                return 0
+        }
+    }
+    
+    
+    // handles special cases
+    if let last = args.last
+    {
+        switch last
+        {
+            // handles count case, returns a count of all the numbers
+            case "count":
+                let dropLast = args.dropLast()
+                let res = dropLast.compactMap{Int($0)}.count
+                
+                return res
+            
+            // handles avg case, returns the average of the numbers
+            case "avg":
+                let dropLast = args.dropLast()
+                let nums = dropLast.compactMap{Int($0)}
+                
+                //prevent crash if sum of nums = 0
+                guard !nums.isEmpty else { return 0 };
+                
+                let res = nums.reduce(0, +) / nums.count
+                
+                return res
+                
+            // handles fact case, returns the factorial of the single number passed in
+            case "fact":
+                // convert first num to string then int
+                guard let num = Int(args.first ?? "") else { return 0 }
+                
+                if num <= 1 { return 1 }
+                
+                let res = (1...num).reduce(1, *)
+                
+                return res
+                
+            default:
+                break
+        }
+    }
+    
     return -1
 }
 
-func calculate(_ arg: String) -> Int {
-    return -1
+func calculate(_ arg: String) -> Int
+{
+    let nums = arg.split(separator: " ").map(String.init)
+    
+    return calculate(nums)
+}
+
+
+// Double return type
+func calculate(_ args: [String]) -> Double
+{
+    // handles empty input
+    guard !args.isEmpty else { return 0 }
+    
+    
+
+    // handles special cases
+    if let last = args.last
+    {
+        switch last
+        {
+            // handles count case, returns a count of all the numbers
+        case "count":
+            let dropLast = args.dropLast()
+            let res = Double(dropLast.compactMap{ Double($0) }.count)
+            
+            return res
+            
+            // handles avg case, returns the average of the numbers
+        case "avg":
+            let dropLast = args.dropLast()
+            let nums = dropLast.compactMap{ Double($0) }
+            
+            //prevent crash if sum of nums = 0
+            guard !nums.isEmpty else { return 0 };
+            
+            let res = nums.reduce(0, +) / Double(nums.count)
+            
+            return res
+            
+            // handles fact case, returns the factorial of the single number passed in
+        case "fact":
+            // convert first num to string then double
+            guard let num = Double(args.first ?? "") else { return 0 }
+            
+            if num <= 1 { return 1 }
+            
+            let res = (1...Int(num)).map(Double.init).reduce(1, *)
+            
+            return res
+            
+        default:
+            break
+        }
+    }
+        
+        
+    // handles 3 arg input
+    if args.count == 3, let l = Double(args[0]), let r = Double(args[2])
+    {
+        let op = args[1]
+        
+        switch op
+        {
+            case "+":
+                return l + r
+            
+            case "-":
+                return l - r
+            
+            case "*":
+                return l * r
+            
+            case "/":
+            return r == 0 ? 0 : l / r
+            
+            case "%":
+            return r == 0 ? 0 : l.truncatingRemainder(dividingBy: r)
+            
+            default:
+                break
+        }
+    }
+    
+    return -0.1
+}
+
+
+
+func calculate(_ arg: String) -> Double
+{
+    let nums = arg.split(separator: " ").map(String.init)
+    return calculate(nums)
 }
 
 //: Below this are the test expressions/calls to verify if your code is correct.
@@ -85,7 +248,7 @@ calculate("5 fact") == 120
 //: Implement `calculate([String])` and `calculate(String)` to handle negative numbers. You need only make the tests below pass. (You do not need to worry about "fact"/factorial with negative numbers, for example.)
 //:
 //: This is worth 1 pt
-/*
+
 calculate(["2", "+", "-2"]) == 0
 calculate(["2", "-", "-2"]) == 4
 calculate(["2", "*", "-2"]) == -4
@@ -100,9 +263,9 @@ calculate("2 - -2") == 4
 calculate("-2 / 2") == -1
 
 calculate("1 -2 3 -4 5 count") == 5
-*/
+
  
-//: Implement `calculate([String])` and `calculate(String)` to use 
+//: Implement `calculate([String])` and `calculate(String)` to use
 //: and return floating-point values. You need only make the tests 
 //: below pass. (Factorial of floating-point numbers doesn't make 
 //: much sense, either.)
@@ -112,13 +275,8 @@ calculate("1 -2 3 -4 5 count") == 5
 //: Integer-based versions above.
 //: 
 //: This is worth 1 pt
-/*
-func calculate(_ args: [String]) -> Double {
-    return -1.0
-}
-func calculate(_ arg: String) -> Double {
-    return -1.0
-}
+
+
 
 calculate(["2.0", "+", "2.0"]) == 4.0
 calculate([".5", "+", "1.5"]) == 2.0
@@ -127,4 +285,4 @@ calculate(["2.5", "*", "2.5"]) == 6.25
 calculate(["2.0", "/", "2.0"]) == 1.0
 calculate(["2.0", "%", "2.0"]) == 0.0
 calculate("1.0 2.0 3.0 4.0 5.0 count") == 5.0
-*/
+
